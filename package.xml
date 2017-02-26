@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>scooter</name>
+  <name>dynamic_tutorials</name>
   <version>0.0.0</version>
-  <description>The scooter package</description>
+  <description>The dynamic_tutorials package</description>
 
   <maintainer email="azhar@todo.todo">azhar</maintainer>
 
