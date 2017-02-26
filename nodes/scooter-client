@@ -1,0 +1,133 @@
+#!/usr/bin/env python
+
+
+PACKAGE = 'dynamic_tutorials'
+import roslib;roslib.load_manifest(PACKAGE)
+import rospy
+import dynamic_reconfigure.client
+
+
+from std_msgs.msg import String , Bool   	
+
+def callback(config):
+	global pub,Zw,aw,bw,cw,dw,global_name,manual_name, parked_name, supervisory_name, autonomous_name, client
+	# button_status_
+	print config
+	global_name = config['Master']
+	manual_name = config['Manual']
+	parked_name = config['Parked']
+	supervisory_name = config['Supervisory']
+	autonomous_name = config['Autonomous']
+
+automode_status_pub = rospy.Publisher('/scooter/button_state_automode', Bool)   #check again! string or int or list
+emergency_status_pub = rospy.Publisher('/scooter/button_state_emergency', Bool)	#"/scooter/" needed? 
+button_status_pub = rospy.Publisher('/scooter/button_status', String)
+
+#button_status_ = 1
+
+#mode = {'Manual':2,'Parked':1 ,'Supervisory':2 ,'Autonomous':0}
+
+#aw = button_status_	== 2		#Manual should be int or string? how to bring the value out
+#bw = button_status_ == 1		#parked
+#cw = button_status_ == 2		#supervisory
+#dw = button_status_ == 0		#autonomous
+#Zw = button_status_ == 1
+
+#aw = Twist(Vector3(1,0,0), Vector3(0,0,0))  #manual
+#bw = Twist(Vector3(-1,0,0), Vector3(0,0,0)) #parked
+#cw = Twist(Vector3(1,1,0), Vector3(0,0,1))  #supervisory
+#dw = Twist(Vector3(1,0,0), Vector3(0,0,-1)) #autonomous
+#Zw = Twist(Vector3(0,0,0), Vector3(0,0,0))  
+
+automode_status = Bool(False)
+emergency_status = Bool(False)
+button_status_string = String("nothing")
+
+
+if __name__ == "__main__":
+	rospy.init_node("dynamic_client")
+	rospy.wait_for_service("/dynamic_tutorials/set_parameters")
+	client = dynamic_reconfigure.client.Client("dynamic_tutorials", timeout=30, config_callback=callback)
+	r = rospy.Rate(60)					#Should the rate be 50?
+
+	global_name = False
+	manual_name = False
+	parked_name = False
+	supervisory_name = False
+	autonomous_name = False
+	
+	while not rospy.is_shutdown():	     	
+		if global_name == True: 
+			if manual_name == True and parked_name == True and supervisory_name == True and autonomous_name == True:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing" 
+			elif manual_name == True and parked_name == True and supervisory_name == True and autonomous_name == False:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing"
+			elif manual_name == True and parked_name == True and supervisory_name == False and autonomous_name == True:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing"
+			elif manual_name == True and parked_name == True and supervisory_name == False and autonomous_name == False:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing"
+			elif manual_name == True and parked_name == False and supervisory_name == True and autonomous_name == True:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing"
+			elif manual_name == True and parked_name == False and supervisory_name == True and autonomous_name == False:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing"
+			elif manual_name == True and parked_name == False and supervisory_name == False and autonomous_name == True:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing"
+			elif manual_name == True and parked_name == False and supervisory_name == False and autonomous_name == False:		#manual
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "Manual" 
+			
+			elif manual_name == False and parked_name == True and supervisory_name == True and autonomous_name == True:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing"
+			elif manual_name == False and parked_name == True and supervisory_name == True and autonomous_name == False:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing"	
+			elif manual_name == False and parked_name == True and supervisory_name == False and autonomous_name == True:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing"
+			elif manual_name == False and parked_name == True and supervisory_name == False and autonomous_name == False:		#parked
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "stop"
+				
+			elif manual_name == False and parked_name == False and supervisory_name == True and autonomous_name == True:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing"
+			elif manual_name == False and parked_name == False and supervisory_name == True and autonomous_name == False:		#supervisory
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "Manual"
+
+			elif manual_name == False and parked_name == False and supervisory_name == False and autonomous_name == True:		#autonomous
+				automode_status.data = True
+				emergency_status.data = False
+				button_status_string.data = "Auto"
+			elif manual_name == False and parked_name == False and supervisory_name == False and autonomous_name == False:
+				automode_status.data = False
+				emergency_status.data = False
+				button_status_string.data = "nothing"
+
+			button_status_pub.publish(button_status_string)
+			automode_status_pub.publish(automode_status)
+			emergency_status_pub.publish(emergency_status)
+
+		r.sleep()
