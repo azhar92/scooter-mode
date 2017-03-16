@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
+
 PACKAGE = 'dynamic_tutorials'
 import roslib;roslib.load_manifest(PACKAGE)
 import rospy
 import dynamic_reconfigure.client
 
+
 from std_msgs.msg import String , Bool , Int16   	
+
 
 def callback(config):
 	global pub,Zw,aw,bw,cw,dw,global_name,manual_name, parked_name, supervisory_name, autonomous_name, client
@@ -21,11 +24,26 @@ automode_status_pub = rospy.Publisher('/scooter/button_state_automode', Bool)
 emergency_status_pub = rospy.Publisher('/scooter/button_state_emergency', Bool)	#"/scooter/" needed? 
 button_status_pub = rospy.Publisher('/scooter/button_status', String)
 control_station_pub = rospy.Publisher('/scooter/control_station', Bool) #is the topic correct? how to create the topic
+#stm_linear_x_pub = rospy.Publisher('/scooter/stm_linear_x', Int16)
+#stm_angle_pub = rospy.Publisher('/scooter/stm_angle', Int16)
 
 automode_status = Bool(False)
 emergency_status = Bool(False)
 button_status_string = String("nothing")
 control_station_status = Bool(False)
+
+#int stm_linear_x_=90  
+#int stm_angle_=90
+#int joy_linear_x_=90
+#int joy_angle_=90
+#double pp_angle_=0.0
+#double cmd_linear_x_ = 0.0
+stm_linear_x_=90  
+stm_angle_=90
+joy_linear_x_=90
+joy_angle_=90
+pp_angle_= 0.0
+cmd_linear_x_ = 0.0
 
 if __name__ == "__main__":
 	rospy.init_node("dynamic_client")
@@ -127,7 +145,8 @@ if __name__ == "__main__":
 			automode_status_pub.publish(automode_status)
 			emergency_status_pub.publish(emergency_status)
 			control_station_pub.publish(control_station_status)
-		
+			#stm_linear_x_pub.publish(stm_linear_x_)
+			#stm_angle_pub.publish(stm_angle_)
 
 		else:
 
